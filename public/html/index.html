@@ -80,11 +80,12 @@
                 <h1>The Algorithm, <small>annotated</small>...</h1>
               </div>
               <p>
-              The algorithm was turned into a node.js module for obvious reasons. Possibly at first blush, an unbovious require is that of the bluebird promise library. Upon reflection though, it will seem quite obvious: When we want to send the file to the browser, reading it and piping it as it's read is a cecidedly asynchronous operation. The algorithm's module "promisified" the functions so that they would be "then-able", and so allow for this.
+              The algorithm was turned into a node.js module for obvious reasons. Possibly at first blush, an unbovious "require" is that of the bluebird promise library. Upon reflection though, it will seem quite obvious: When we want to send the file to the browser, reading it and piping it as it's read is a decidedly asynchronous operation. The algorithm's module "promisified" the functions so that they would be "then-able", and so allow for this.
               </p>
               <code><pre>
                 const Promise = require('bluebird');
                 const fs      = require('fs');
+                const path      = require( 'path' );
                 module.exports = {
               </pre></code>
               <p>
@@ -160,6 +161,7 @@
                   }
               </pre></code>
               <p>
+                Another point of the above function is that two write streams are created, each writing to a separate file. The <code>processed/</code> directory holds a de-duped file with its returns translated to html &lt;br /&gt; tags so it displays cleaner in the browser. The <code>downloads/</code> directory hold a de-duped file that uses line returns, so best viewed in a text document. This is the file offered for download to the user.
                 <strong>Postmortem:</strong><br />
                 Other obvious things that could improve this, of which there are may. Here a a few: 
                 <ul>

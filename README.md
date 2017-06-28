@@ -1,4 +1,5 @@
 # chefsteps algorithm
+![Screen Cast](https://github.com/nsardo/chefsteps/shiz.gif)
 
 ## The structure of the project
 **Documentation** on the code is in the [jsdoc](http://usejsdoc.org/) folder. If you've never used *jsdoc* before, all you need do is drag the *index.html* file from that folder into your browser. From that document you can browse both the api, and the code.
