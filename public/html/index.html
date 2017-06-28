@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>ChefSteps</title>
+    <title>ChefSteps Algorithm</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Nicholas Sardo">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
@@ -87,7 +88,7 @@
                 module.exports = {
               </pre></code>
               <p>
-              To protect against a memory crash in the case of crazy huge files and server memory load, the file is read in as a stream, line by line.
+              To protect against a memory crash in the case of crazy huge files and/or server memory load, the file is read in as a stream, line by line.
               </p>
               <code><pre>
                 doAlg: ( fileN ) => {
@@ -114,9 +115,10 @@
                   });
                 </pre></code>
                 <p>
-                The workings of this function are encased in a Bluebird Promise
+                The workings of this function are encased in a Bluebird Promise.<br />
                 When all the lines have been read, a <em>close</em> event is fired.<br />
-                Since the file is closed, the function can <em>resolve</em> the Promise.
+                Since the file is closed, the function can <em>resolve</em> the Promise.<br />
+                The resolution sends along the hash, so that it is available in the "then".
                 </p>
                 <code><pre>
                       readByLine.on('close', function(){ 
@@ -135,22 +137,37 @@
                 </p>
                 <code><pre>
                   writeOutFile: ( hash, fileN ) => {
-                          return new Promise(function(resolve) {
-                            let wstream = fs.createWriteStream( fileN );
+                          return new Promise(function( resolve ){
+                            let wn      = 'wn' + path.basename( fileN )
+                              , wfile   = path.join('./processed', wn )
+                              , wstream = fs.createWriteStream( wfile ) //web viewable file
+                              , nm      = 'dl' + path.basename( fileN )
+                              , dlfile  = path.join( './downloads/', nm ) //downloadable file
+                              , dstream = fs.createWriteStream( dlfile );
+
                             for( let line in hash ) {
                               if ( hash[line] >= 1 ) {
-                                wstream.write( line + '&lt;br /&gt;' );
+                                wstream.write( line + '<br />' );
+                                dstream.write( line + '\n' );
                                 continue; //next line
-                              } else {
-                                wstream.write(line + '&lt;br /&gt;');
                               }
                             }
                             wstream.end();
+                            dstream.end();
                             resolve();
-                            console.timeEnd('foo');
+                            console.timeEnd( 'foo' );
                           });
-                        }
+                  }
               </pre></code>
+              <p>
+                <strong>Postmortem:</strong><br />
+                Other obvious things that could improve this, of which there are may. Here a a few: 
+                <ul>
+                  <li>Helpful toast's</li>
+                  <li>users, that can then have their own "directories", and select files from</li>
+                  <li>error checking against type of file uploaded (ensure it is within parameters)</li>
+                </ul>
+              </p>
             </div>
           </div>  
         </div>
@@ -164,10 +181,10 @@
                   <div class="input-group">
                     <span class="input-group-addon" id="file-addon">Upload File</span>
                     <input type="file" class="form-control" aria-describedby="file-addon"><br /><br />
-                    <span class="col-md-offset-4">
-                      <button class="btn btn-default" role="button" id="submit-button">Upload List</button>
-                    </span>
                   </div>
+                  <span class="col-md-offset-4">
+                    <button class="btn btn-success" role="button" id="submit-button">Upload List</button>
+                  </span>
                 </form>
                 <div id="progress">
                   <div id="bar"></div>
@@ -176,7 +193,9 @@
               </div>
               <div id="alg-div">
                   <h1 class="page-header" style="display:inline-block;">Run the Algorythm...<small>and pray...&nbsp;&nbsp;</small></h1>&nbsp;&nbsp;&nbsp;&nbsp;
-                  <button id="run-alg" class="btn btn-primary">Run...</button>
+                  <button id="run-alg" class="btn btn-primary">Run...</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <button id="download" class="btn btn-info">Download de-duped list...</button>&nbsp;&nbsp;&nbsp;&nbsp;
+                  <button id="reset" class="btn btn-warning">Reset</button>
                   <br /><br />
                   <div><p id="completed"></p></div>
               </div>
@@ -186,95 +205,6 @@
       </div>
     </div>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="../js/csa.js"></script>
   </body>
-  <script>
-    $('#main-tabs a').click(function(e){
-      e.preventDefault();
-      $(this).tab('show');
-    });
-
-    let files, data;
-    function makeReady(e) {
-      files = e.target.files;
-      console.log( 'files is ', files );
-    };
-
-    function doUpload(e) {
-      e.stopPropagation();
-      e.preventDefault();
-
-      if ( typeof files == 'undefined' ) return;
-      data = new FormData();
-      $.each(files, function(key, value)
-      {
-          data.append(key, value);
-      });
-      
-      $.ajax({
-          url: '/',
-          type: 'POST',
-          data: data,
-          cache: false,
-          processData: false, // Don't process the file
-          contentType: false, // otherwise jQuery will tell the server its a query string request
-          beforeSend: function() 
-          {
-              $("#progress").show();
-              //clear
-              $("#bar").width('0%');
-              $("#percent").html("0%");
-          },
-          uploadProgress: function(event, position, total, percentComplete) 
-          {
-              $("#bar").width(percentComplete+'%');
-              $("#percent").html(percentComplete+'%');
-       
-          },
-          success: function( data, textStatus, jqXHR )
-          {
-              $("#bar").width('100%');
-              $("#percent").html('100%');
-          },
-          error: function(jqXHR, textStatus, errorThrown)
-          {
-            console.log('ERRORS: ' + textStatus);
-            $('#progress').hide();
-            $("#bar").width('0%');
-            $("#percent").html("0%");
-          },
-          complete: function() {
-            setTimeout(function(){
-              $('#progress').hide();
-              $("#bar").width('0%');
-              $("#percent").html("0%");
-              $('input[type=file').val('');
-            }, 500);
-
-            $('#form-div').hide();
-            $('#alg-div').show();
-          }
-      });
-    };
-    function runAlg(e) {
-      e.preventDefault();
-
-      $.ajax({
-        type: "PUT",
-        url: "/",
-        data: '{"name":"John", "age":30, "city":"New York"}',
-        contentType: "application/json",
-        //dataType: "json",
-        success: function(msg) {
-          $('#completed').html(msg);
-        }
-      });
-    };
-
-    $('#submit-button').on('click', doUpload );
-    $('input[type=file').on('change', makeReady );
-    $('#run-alg').on('click', runAlg );
-
-    $('#progress').hide();
-    $('#alg-div').hide();
-  </script>
 </html>
