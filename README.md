@@ -1,5 +1,5 @@
 # chefsteps algorithm
-![Screen Cast](https://github.com/nsardo/chefsteps/shiz.gif)
+![Screen Cast](https://github.com/nsardo/chefsteps/blob/master/shiz.gif)
 
 ##NOTA BENE
 You need to create three directories if they are not present: uploads/ downloads/ and processed/
