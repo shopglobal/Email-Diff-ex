@@ -1,7 +1,7 @@
 # chefsteps algorithm
 ![Screen Cast](https://github.com/nsardo/chefsteps/blob/master/shiz.gif)
 
-##NOTA BENE
+## NOTA BENE
 You need to create three directories if they are not present: uploads/ downloads/ and processed/
 
 This can be done on the commandline as follows ($ denotes command prompt):
