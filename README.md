@@ -1,8 +1,8 @@
-# chefsteps algorithm
+# email-diff-ex algorithm
 ![Screen Cast](https://github.com/nsardo/chefsteps/blob/master/shiz.gif)
 
 ## NOTA BENE
-Sadly, this was hurried, so there is no representation of accuracy, fitness of purpose, or even fitness at all.
+No representation of accuracy, fitness of purpose, or even fitness at all.
 
 You need to create three directories if they are not present: uploads/ downloads/ and processed/
 This can be done on the commandline as follows ($ denotes command prompt):
