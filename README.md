@@ -1,5 +1,5 @@
 # email-diff-ex algorithm
-![Screen Cast](https://github.com/nsardo/chefsteps/blob/master/xxxx.gif)
+![Screen Cast](https://github.com/nsardo/chefsteps/blob/master/shiz.gif)
 
 ## NOTA BENE
 No representation of accuracy, fitness of purpose, or even fitness at all.
